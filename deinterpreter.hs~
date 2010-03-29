@@ -1,0 +1,31 @@
+      
+
+substitute :: Assignments -> Expr -> Expr
+substitute a e = map (replace a) (components e)
+
+match :: Expr -> Expr -> Assignments
+match e1 Unknown = (components e1)
+
+type Antecedent = Expr
+type Consequent = Expr
+data Rule = Rule {
+      antecedent :: Antecedent , 
+      consequent :: Consequent ,
+    } deriving (Show, Eq)
+
+type Semantics = [Rule]
+
+deapply :: Rule -> Expr
+deapply r e = substitute fixedTerms (antecedent Rule)
+    where fixedTerms = match (consequent r) e 
+
+applicable :: Expr -> Rule -> Bool
+applicable e r = (match e (consequent r)) /= []
+
+oneBack :: Semantics -> Expr -> [Expr]
+oneBack s e = map deapply (filter (applicable e) s)
+
+type Depth = Int
+deval :: Depth -> Exp -> Hypotheses 
+deval n exp = concat.(map deval (n-1)) newExprs
+    where newExprs = oneBack semantics expr 
