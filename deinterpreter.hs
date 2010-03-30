@@ -1,50 +1,60 @@
---get rid of AbstractExpr
+import qualified Data.Map as Map
 
-data Assignment = Assign Label Expr
-type Assignments = [Assignment]
+-- --get rid of AbstractExpr
 
-substitute :: Assignments -> Expr -> Expr
-substitute a e = map (replace a) (components e)
+-- data Assignment = Assign Label Expr
+-- type Assignments = [Assignment]
 
-type SubExpr = [Expr]
-data Expr = Expr Name Label SubExprs 
+-- substitute :: Assignments -> Expr -> Expr
+-- substitute a e = map (replace a) (components e)
 
-data AbstractExpr = AbstractExpr Expr Labels
+-- type SubExpr = [Expr]
+-- data Expr = Expr Name Label SubExprs 
 
-match :: AbstractExpr -> Expr -> Assignments
-match c e 
-    | Unknown == expr c = [Assign (head . labels c) e]
-    | otherwise = error "Current system does not take into account non-Unknown consequents"
+-- data AbstractExpr = AbstractExpr Expr Labels
 
-type Antecedent = AbstractExpr
-type Consequent = AbstractExpr
-data Rule = Rule {
-      antecedent :: Antecedent , 
-      consequent :: Consequent ,
-    } deriving (Show, Eq)
 
-type Semantics = [Rule]
+-- type Antecedent = AbstractExpr
+-- type Consequent = AbstractExpr
+-- data Rule = Rule {
+--       antecedent :: Antecedent , 
+--       consequent :: Consequent ,
+--     } deriving (Show, Eq)
 
-deapply :: Rule -> Expr -> Expr
-deapply r e = substitute fixedTerms (antecedent Rule)
-    where fixedTerms = match (consequent r) e 
+-- type Semantics = [Rule]
 
-applicable :: Expr -> Rule -> Bool
-applicable e r = (match e (consequent r)) /= []
 
-oneBack :: Semantics -> Expr -> [Expr]
-oneBack s e = map deapply (filter (applicable e) s)
 
-replace :: Expr -> SubExpr -> Expr -> Expr
-replace e s replacement = 
+
+-- replace :: Expr -> SubExpr -> Expr -> Expr
+-- replace e s replacement = 
+data Expr = Expr Name Map Label Expr
+          | SubExpr Label Expr
+          | Unknown
+
+applicableRules :: Semantics -> Expr -> [Rule]
+applicableRules s e = undefined
 
 replaceSubExpr :: Expr -> SubExpr -> SubExpr -> Expr
 replaceSubExpr expr target replacement = undefined
 
-type Depth = Int
+getSubExprs :: Expr -> [SubExpr]
+getSubExprs expr = undefined
 
-oneBackLst :: Semantics -> [Expr] -> [Expr]
-oneBackLst s exprLst = concat (map oneBack exprLst)
+--match should pattern match on Expr (Expr SubExpr)
+match :: Expr -> Expr -> [SubExpr]
+match c e 
+    | Unknown == expr c = [Assign (head . labels c) e]
+    | otherwise = error "Current system does not take into account non-Unknown consequents"
+--for now target is same as replacement
+deapply :: Rule -> Expr -> Expr
+deapply r e = foldr (map (replaceSubExpr (antecedent r)) assignments) assignments
+    where assignments = match (consequent r) e 
+
+oneBack :: Semantics -> Expr -> [Expr]
+oneBack s e = map deapply (applicableRules s e)
+
+type Depth = Int
 
 deval :: Depth -> Semantics -> Expr -> [Expr]
 deval s 0 expr = [expr]
