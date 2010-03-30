@@ -1,8 +1,13 @@
+--get rid of AbstractExpr
+
 data Assignment = Assign Label Expr
 type Assignments = [Assignment]
 
 substitute :: Assignments -> Expr -> Expr
 substitute a e = map (replace a) (components e)
+
+type SubExpr = [Expr]
+data Expr = Expr Name Label SubExprs 
 
 data AbstractExpr = AbstractExpr Expr Labels
 
@@ -20,7 +25,7 @@ data Rule = Rule {
 
 type Semantics = [Rule]
 
-deapply :: Rule -> Expr
+deapply :: Rule -> Expr -> Expr
 deapply r e = substitute fixedTerms (antecedent Rule)
     where fixedTerms = match (consequent r) e 
 
@@ -30,11 +35,19 @@ applicable e r = (match e (consequent r)) /= []
 oneBack :: Semantics -> Expr -> [Expr]
 oneBack s e = map deapply (filter (applicable e) s)
 
-type Depth = Int
-deval :: Depth -> Expr -> Hypotheses 
-deval n expr = concat.(map deval (n-1)) newExprs
-    where newExprs = oneBack semantics (subExprs expr)
+replace :: Expr -> SubExpr -> Expr -> Expr
+replace e s replacement = 
 
-deval n expr = map ((map . replace expr) . deval (n-1)) (subExprs expr)
-    where replace = deval (n-1) 
+replaceSubExpr :: Expr -> SubExpr -> SubExpr -> Expr
+replaceSubExpr expr target replacement = undefined
+
+type Depth = Int
+
+oneBackLst :: Semantics -> [Expr] -> [Expr]
+oneBackLst s exprLst = concat (map oneBack exprLst)
+
+deval :: Depth -> Semantics -> Expr -> [Expr]
+deval s 0 expr = []
+deval s n expr = concat map replaceDevalSubExpr (getSubExprs expr)
+    where replaceDevalSubExpr subExpr = map (replaceSubExpr expr subExpr) (oneBackLst s (deval (n-1) (getExpr subExpr)))
 
