@@ -47,7 +47,6 @@ oneBackLst :: Semantics -> [Expr] -> [Expr]
 oneBackLst s exprLst = concat (map oneBack exprLst)
 
 deval :: Depth -> Semantics -> Expr -> [Expr]
-deval s 0 expr = []
+deval s 0 expr = [expr]
 deval s n expr = concat map replaceDevalSubExpr (getSubExprs expr)
-    where replaceDevalSubExpr subExpr = map (replaceSubExpr expr subExpr) (oneBackLst s (deval (n-1) (getExpr subExpr)))
-
+    where replaceDevalSubExpr subExpr = map (replaceSubExpr expr subExpr) (deval (n-1) (oneBack s (getExpr subExpr)))
