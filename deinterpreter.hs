@@ -32,8 +32,12 @@ data Expr = Expr Name Map Label Expr
           | SubExpr Label Expr
           | Unknown
 
+applicable :: Expr -> Rule -> Bool
+applicable e r = match (consequent r) e /= []
+
 applicableRules :: Semantics -> Expr -> [Rule]
-applicableRules s e = undefined
+applicableRules s e = map (applicable e) (rules s)
+
 
 replaceSubExpr :: Expr -> SubExpr -> SubExpr -> Expr
 replaceSubExpr expr target replacement = undefined
@@ -42,11 +46,13 @@ getSubExprs :: Expr -> [SubExpr]
 getSubExprs expr = undefined
 
 --match should pattern match on Expr (Expr SubExpr)
-match :: Expr -> Expr -> [SubExpr]
-match c e 
-    | Unknown == expr c = [Assign (head . labels c) e]
+--match is non-commutative i.e. match a b /=> match b a, it takes the unknown subexpressions in the first argument and matches them to either subexpressions in the second or if the first is a single subexpression it matches the 
+matchExprs :: Expr -> Expr -> [SubExpr]
+matchExprs c e 
+    | (SubExpr c Unknown) == expr c = [Assign (head . labels c) e]
     | otherwise = error "Current system does not take into account non-Unknown consequents"
 --for now target is same as replacement
+--if a rule is not applicable it returns an empty 
 deapply :: Rule -> Expr -> Expr
 deapply r e = foldr (map (replaceSubExpr (antecedent r)) assignments) assignments
     where assignments = match (consequent r) e 
@@ -56,7 +62,7 @@ oneBack s e = map deapply (applicableRules s e)
 
 type Depth = Int
 
-deval :: Depth -> Semantics -> Expr -> [Expr]
+deval :: Semantics -> Depth -> Expr -> [Expr]
 deval s 0 expr = [expr]
 deval s n expr = concat map replaceDevalSubExpr (getSubExprs expr)
     where replaceDevalSubExpr subExpr = map (replaceSubExpr expr subExpr) (deval (n-1) (oneBack s (getExpr subExpr)))

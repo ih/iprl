@@ -1,3 +1,8 @@
+--example of match
+match (True []) (Unknown, "t2") => [(True [], "t2")]
+
+
+------------------
 data Test = Test Int
           | Mest Int Int
             deriving Show
