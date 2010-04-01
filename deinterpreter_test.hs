@@ -1,11 +1,24 @@
 --example of match
-match (True []) (Unknown, "t2") => [(True [], "t2")]
 
+import qualified Data.Map as Map
 
 ------------------
-data Test = Test Int
-          | Mest Int Int
+data TC = TC
+    { getA :: Int,
+      getB :: String
+    } deriving Show
+
+d :: TC -> Int
+d (TC a b) = a+5 
+
+data Test = Test Int Mest
+          | Unknown
             deriving Show
+data Mest = Mest Int Test
+            deriving Show
+m = Mest 3 Unknown
+t = Test 4 m
+t2 = Test 5 (Mest 6 t)
 
 apply f args = foldr f [] args
 
