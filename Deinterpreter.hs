@@ -15,6 +15,11 @@ data Expr = Expr Name [SubExpr]
           | Unknown
             deriving Show
 
+getSubLabels :: Expr -> [Label]
+getSubLabels (Expr _ subExprs) = map getLabel subExprs
+getSubLabels (Component s) = [getLabel s]
+getSubLabels _ = []
+
 getSubExprs :: Expr -> [SubExpr]
 getSubExprs (Expr _ subExprs) = subExprs
 getSubExprs (Component s) = [s]
@@ -48,7 +53,7 @@ bindUnknown _ _ = undefined
 --for now target is same as replacement
 --if a rule is not applicable it returns an empty 
 deapply :: Expr -> Rule -> Expr
-deapply e r = foldl' replaceSubExpr e assignments
+deapply e r = foldl' replaceSubExpr (antecedent r) assignments
     where assignments = bindUnknown (consequent r) e 
 
 oneBack :: Semantics -> Expr -> [Expr]
