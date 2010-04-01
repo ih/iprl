@@ -1,33 +1,6 @@
 import qualified Data.Map as Map
 import Data.List (foldl')
--- --get rid of AbstractExpr
 
--- data Assignment = Assign Label Expr
--- type Assignments = [Assignment]
-
--- substitute :: Assignments -> Expr -> Expr
--- substitute a e = map (replace a) (components e)
-
--- type SubExpr = [Expr]
--- data Expr = Expr Name Label SubExprs 
-
--- data AbstractExpr = AbstractExpr Expr Labels
-
-
--- type Antecedent = AbstractExpr
--- type Consequent = AbstractExpr
--- data Rule = Rule {
---       antecedent :: Antecedent , 
---       consequent :: Consequent ,
---     } deriving (Show, Eq)
-
-
-
-
-
-
--- replace :: Expr -> SubExpr -> Expr -> Expr
--- replace e s replacement = 
 type Name = String
 type Label = String
 data SubExpr = SubExpr {
@@ -35,14 +8,10 @@ data SubExpr = SubExpr {
       getExpr :: Expr
     } deriving Show
 
-
 data Expr = Expr Name [SubExpr]
           | Component SubExpr
           | Unknown
             deriving Show
--- data Expr = SubExpr Label Expr
---           | TExpr Name [SubExpr]
---           | Unknown
 
 getSubExprs :: Expr -> [SubExpr]
 getSubExprs (Expr _ subExprs) = subExprs
@@ -60,14 +29,18 @@ data Rule = Rule {
       consequent :: Consequent
     } deriving Show
 
-replaceSubExpr :: Expr -> SubExpr -> Expr
-replaceSubExpr expr replacement = undefined
+changeSub :: SubExpr -> SubExpr -> SubExpr
+changeSub (SubExpr l1 old) (SubExpr l2 new)
+    | l1 == l2 = (SubExpr l1 new)
+    | otherwise = (SubExpr l1 old)
 
+replaceSubExpr :: Expr -> SubExpr -> Expr
+replaceSubExpr (Expr name s) replacement = Expr name (map (changeSub replacement) s)
 
 --match should pattern match on Expr (Expr SubExpr)
 --match is non-commutative i.e. match a b /=> match b a, it takes the unknown subexpressions in the first argument and matches them to either subexpressions in the second or if the first is a single subexpression it matches the 
 bindUnknown :: Expr -> Expr -> [SubExpr]
-bindUnknown (Component c) e = undefined
+bindUnknown (Component (SubExpr l Unknown)) e = [(SubExpr l e)]
 bindUnknown _ _ = undefined
 
 --for now target is same as replacement
