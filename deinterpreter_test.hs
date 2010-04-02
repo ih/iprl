@@ -1,16 +1,28 @@
-import Test.QuickCheck
+--import Test.QuickCheck
 import Deinterpreter
---replaceSubExpr properties
-prop_sameLabel expr subExpr = labels expr == labels (replaceSubExpr expr subExpr)
-
 
 t=Expr "True" []
 f=Expr "False" []
 --myIf=Expr "If" [(SubExpr "t1" t, f, f]
 aIf = Expr "If" [(SubExpr "t0" Unknown), (SubExpr "t1" Unknown), (SubExpr "t2" Unknown)]
 tIf = Expr "If" [(SubExpr "t0" t), (SubExpr "t1" Unknown), (SubExpr "t2" Unknown)]
+fIf = Expr "If" [(SubExpr "t0" f), (SubExpr "t1" Unknown), (SubExpr "t2" Unknown)]
 r0 = Rule tIf (Component (SubExpr "t1" Unknown))
-s = [r0]
+r1 = Rule fIf (Component (SubExpr "t2" Unknown))
+s = [r0,r1]
+
+subsT = getSubExprs t
+sube = head subsT
+ob = oneBack s (getExpr sube)
+--replaceSubExpr t.SubExpr (getLabel sube)) (head ob)
+
+--replaceSubExpr properties
+prop_sameLabel expr subExpr = getSubLabels expr == getSubLabels (replaceSubExpr expr subExpr)
+
+--changeSub (SubExpr "t0" t) (SubExpr "t1" Unknown)
+
+--map (SubExpr "t1" Unknown) (getSubExprs tIf) 
+
 --example of match
 
 

@@ -21,7 +21,7 @@ getSubLabels (Component s) = [getLabel s]
 getSubLabels _ = []
 
 getSubExprs :: Expr -> [SubExpr]
-getSubExprs (Expr _ subExprs) = subExprs
+getSubExprs (Expr n subExprs) = (SubExpr "Self" (Expr n subExprs)):subExprs
 getSubExprs (Component s) = [s]
 getSubExprs _ = []
 
@@ -37,11 +37,12 @@ data Rule = Rule {
     } deriving Show
 
 changeSub :: SubExpr -> SubExpr -> SubExpr
-changeSub (SubExpr l1 old) (SubExpr l2 new)
+changeSub (SubExpr l2 new) (SubExpr l1 old) 
     | l1 == l2 = (SubExpr l1 new)
     | otherwise = (SubExpr l1 old)
 
 replaceSubExpr :: Expr -> SubExpr -> Expr
+replaceSubExpr _ (SubExpr "Self" e) = e
 replaceSubExpr (Expr name s) replacement = Expr name (map (changeSub replacement) s)
 
 --match should pattern match on Expr (Expr SubExpr)
