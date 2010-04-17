@@ -46,7 +46,7 @@ replaceSubExpr _ (SubExpr "Self" e) = e
 replaceSubExpr (Expr name s) replacement = Expr name (map (changeSub replacement) s)
 
 --match should pattern match on Expr (Expr SubExpr)
---match is non-commutative i.e. match a b /=> match b a, it takes the unknown subexpressions in the first argument and matches them to either subexpressions in the second or if the first is a single subexpression it matches the 
+--match is not commutative i.e. match a b /=> match b a, it takes the unknown subexpressions in the first argument and matches them to either subexpressions in the second or if the first is a single subexpression it matches the 
 bindUnknown :: Expr -> Expr -> [SubExpr]
 bindUnknown (Component (SubExpr l Unknown)) e = [(SubExpr l e)]
 bindUnknown _ _ = undefined
