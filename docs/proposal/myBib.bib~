@@ -1,0 +1,18 @@
+@article{Kitzelmann2006Inductive,
+    address = {Cambridge, MA, USA},
+    author = {Kitzelmann, Emanuel and Schmid, Ute},
+    citeulike-article-id = {2784157},
+    citeulike-linkout-0 = {http://portal.acm.org/citation.cfm?id=1248562},
+    issn = {1533-7928},
+    journal = {J. Mach. Learn. Res.},
+    keywords = {homepage, synthesis},
+    pages = {429--454},
+    posted-at = {2008-05-11 11:53:36},
+    priority = {2},
+    publisher = {MIT Press},
+    title = {Inductive Synthesis of Functional Programs: An Explanation Based Generalization Approach},
+    url = {http://portal.acm.org/citation.cfm?id=1248562},
+    volume = {7},
+    year = {2006}
+}
+

@@ -1,0 +1,19 @@
+\begin{thebibliography}{1}
+
+\bibitem{Kitzelmann2006Inductive}
+Emanuel Kitzelmann and Ute Schmid.
+\newblock Inductive synthesis of functional programs: An explanation based
+  generalization approach.
+\newblock {\em J. Mach. Learn. Res.}, 7:429--454, 2006.
+
+\bibitem{Pierce2002Types}
+Benjamin~C. Pierce.
+\newblock {\em Types and Programming Languages}.
+\newblock The MIT Press, 1 edition, February 2002.
+
+\bibitem{Winskel1993Formal}
+Glynn Winskel.
+\newblock {\em Formal Semantics of Programming Languages}.
+\newblock The MIT Press, February 1993.
+
+\end{thebibliography}
